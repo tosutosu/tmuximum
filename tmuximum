@@ -4,12 +4,13 @@ tmux_operation() {
   answer=$(tmux_operation_choices | fzf --ansi --select-1 --prompt="Tmux >")
   case $answer in
     #*new\ session* ) tmux new-session \; split-window -vp 23 ;;
-    *new\ session* ) tmux new-session ;;
-    *new\ window* ) tmux new-window ;;
+    *new\ session* ) exec tmux new-session ;;
+    *new\ window* ) exec tmux new-window ;;
     "kill sessions" ) tmux_kill_session ;;
     "kill windows" ) tmux_kill_window ;;
-    *switch* ) tmux select-window -t $(echo "$answer" | awk '{print $4}' | sed "s/://g") ;;
-    *attach* ) tmux attach -t $(echo "$answer" | awk '{print $4}' | sed 's/://') ;;
+    *switch* ) exec tmux select-window -t $(echo "$answer" | awk '{print $4}' | sed "s/://g") ;;
+    *attach* ) exec tmux attach -t $(echo "$answer" | awk '{print $4}' | sed 's/://') ;;
+    *detach* ) tmux detach;;
   esac
 }
 
@@ -25,6 +26,7 @@ tmux_operation_choices() {
       echo  "${CYAN}switch${C_END} ==> [ $(echo $line | awk '{print $1 " " $2 " " $3 " " $4 " " $5}') ]"
     done
     echo  "${CYAN}switch${C_END} ==> [ new window ]"
+    echo "${YELLOW}detach${C_END}"
     echo "${RED}kill${C_END} windows"
   fi
   tmux has-session 2>/dev/null && echo "${RED}kill${C_END} sessions"
