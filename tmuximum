@@ -10,6 +10,7 @@ tmux_operation() {
     "kill windows" ) tmux_kill_window ;;
     *switch* ) tmux select-window -t $(echo "$answer" | awk '{print $4}' | sed "s/://g") ;;
     *attach* ) tmux attach -t $(echo "$answer" | awk '{print $4}' | sed 's/://') ;;
+    *detach* ) tmux detach -t $(echo "$answer" | awk '{print $4}' | sed 's/://') ;;
   esac
 }
 
@@ -25,6 +26,7 @@ tmux_operation_choices() {
       echo  "${CYAN}switch${C_END} ==> [ $(echo $line | awk '{print $1 " " $2 " " $3 " " $4 " " $5}') ]"
     done
     echo  "${CYAN}switch${C_END} ==> [ new window ]"
+    echo "${YELLOW}detach${C_END}"
     echo "${RED}kill${C_END} windows"
   fi
   tmux has-session 2>/dev/null && echo "${RED}kill${C_END} sessions"
